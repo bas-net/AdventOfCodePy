@@ -16,4 +16,16 @@ def p1(input: str) -> str:
 
 
 def p2(input: str) -> str:
-    pass
+    total = 0
+    for package in input.split():
+        dimensions = list(map(int, package.split('x')))
+
+        dimensions.sort()
+        
+        perimeter = dimensions[0] * 2 + dimensions[1] * 2
+
+        ribbon = dimensions[0] * dimensions[1] * dimensions[2]
+
+        total += perimeter + ribbon
+
+    return total
