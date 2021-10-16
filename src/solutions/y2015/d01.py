@@ -1,7 +1,6 @@
 def p1(input: str) -> str:
-    print(f'y2015d01p1')
-    print(input)
+    return sum([1 if x == '(' else -1 if x == ')' else 0 for x in input])
+
 
 def p2(input: str) -> str:
-    print(f'y2015d01p2')
-    print(input)
+    pass

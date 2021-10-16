@@ -13,3 +13,8 @@ DefaultAzureCredential and VisualStudioCodeCredential can authenticate as the us
 Visual Studio Code Account Sign In
 
 Required to make a new AAD account (like a service account) and use that to sign in.
+
+
+## Test files
+powershell.
+`3..9 | %{ New-Item ('./tests/2015/01/1/out/{0:00}.txt' -f $_) }`
