@@ -3,7 +3,6 @@ from azure.keyvault.secrets import SecretClient, KeyVaultSecret
 from azure.identity import VisualStudioCodeCredential
 from configparser import ConfigParser
 from requests.sessions import Session
-from types import SimpleNamespace
 
 import json
 import re

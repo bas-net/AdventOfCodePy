@@ -4,13 +4,14 @@ from enum import Enum
 import os
 import importlib.util
 import re
+import json
 
 
 def prRed(skk): print("\033[91m {}\033[00m" .format(skk))
 def prGreen(skk): print("\033[92m {}\033[00m" .format(skk))
 def prCyan(skk): print("\033[96m {}\033[00m" .format(skk))
 def prYellow(skk): print("\033[93m {}\033[00m" .format(skk))
-
+def prLightPurple(skk): print("\033[94m {}\033[00m" .format(skk))
 
 class TestStatus(Enum):
     FAIL = 0,
@@ -54,7 +55,31 @@ def run_tests(dayModule: ModuleType, year: str, day: str, part: str) -> TestStat
     return TestStatus.FAIL if not all_tests_green else TestStatus.SUCCESS if test_count > 0 else TestStatus.NO_TESTS
 
 
+def run_day_part(dayModule: ModuleType, year: str, day: str, part: str) -> None:
+    test_result = run_tests(dayModule, year, day, part)
+
+    with open(f'./inputs/{year}/{day}.txt', 'r') as input_file:
+        input_string = input_file.read().strip()
+
+        if part == '1':
+            output = str(dayModule.p1(input_string))
+        elif part == '2':
+            output = str(dayModule.p2(input_string))
+        else:
+            raise 'Error'
+
+        if test_result == TestStatus.SUCCESS:
+            prGreen(f'  {year}.{day}.{part} result \'{output}\'')
+        elif test_result == TestStatus.FAIL:
+            prRed(f'  {year}.{day}.{part} result \'{output}\'')
+        else:
+            prYellow(f'  {year}.{day}.{part} result \'{output}\'')
+
+
 download_missing_day_inputs()
+
+with open('./src/blacklist.json') as blacklist_json:
+    blacklist = json.load(blacklist_json)
 
 for yearDir in os.scandir('./src/solutions'):
     year = re.findall('y(\d\d\d\d)', yearDir.name)[0]
@@ -66,6 +91,7 @@ for yearDir in os.scandir('./src/solutions'):
         if not dayMatches:
             continue
         day = dayMatches[0]
+
         daySpec = importlib.util.spec_from_file_location(
             f'{yearDir.name}.{dayFile.name}',
             f'./src/solutions/{yearDir.name}/{dayFile.name}'
@@ -75,24 +101,23 @@ for yearDir in os.scandir('./src/solutions'):
 
         prCyan(f'Running {year}.{day}')
 
-        p1_test_result = run_tests(dayModule, year, day, '1')
-        p2_test_result = run_tests(dayModule, year, day, '2')
+        run_p1 = True
+        run_p2 = True
 
-        with open(f'./inputs/{year}/{day}.txt', 'r') as input_file:
-            input_string = input_file.read().strip()
+        # Handle blacklisting
+        if year in blacklist['blacklisted_day_parts']:
+            if day in blacklist['blacklisted_day_parts'][year]:
+                if '1' in blacklist['blacklisted_day_parts'][year][day]:
+                    run_p1 = False
+                if '2' in blacklist['blacklisted_day_parts'][year][day]:
+                    run_p2 = False
 
-            output_p1 = str(dayModule.p1(input_string))
-            if p1_test_result == TestStatus.SUCCESS:
-                prGreen(f'  {year}.{day}.1 result \'{output_p1}\'')
-            elif p1_test_result == TestStatus.FAIL:
-                prRed(f'  {year}.{day}.1 result \'{output_p1}\'')
-            else:
-                prYellow(f'  {year}.{day}.1 result \'{output_p1}\'')
-
-            output_p2 = str(dayModule.p2(input_string))
-            if p2_test_result == TestStatus.SUCCESS:
-                prGreen(f'  {year}.{day}.2 result \'{output_p2}\'')
-            elif p2_test_result == TestStatus.FAIL:
-                prRed(f'  {year}.{day}.2 result \'{output_p2}\'')
-            else:
-                prYellow(f'  {year}.{day}.2 result \'{output_p2}\'')
+        if run_p1:
+            run_day_part(dayModule, year, day, '1')
+        else:
+            prLightPurple(f'  {year}.{day}.1 skipped')
+        
+        if run_p2:
+            run_day_part(dayModule, year, day, '2')
+        else:
+            prLightPurple(f'  {year}.{day}.2 skipped')
