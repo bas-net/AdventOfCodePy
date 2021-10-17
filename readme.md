@@ -17,7 +17,7 @@ Required to make a new AAD account (like a service account) and use that to sign
 
 ## Test files
 powershell.
-`'./tests/2015/06/1/' | %{ $path=$_; 1..3 | %{ @($("$($path)in/{0:00}.txt" -f $_),$("$($path)out/{0:00}.txt" -f $_)) }} | %{ new-item $_  -Force } | Out-Null`
+`'./tests/2015/06/2/' | %{ $path=$_; 1..2 | %{ @($("$($path)in/{0:00}.txt" -f $_),$("$($path)out/{0:00}.txt" -f $_)) }} | %{ new-item $_  -Force } | Out-Null`
 
 ## Day files
 ```ps
