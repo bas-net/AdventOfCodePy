@@ -22,9 +22,9 @@ def run_tests(dayModule: ModuleType, year: str, day: str, part: str) -> bool:
             testDescr = f'    Test {year}.{day}.{part}.{testName}'
 
             with open(f'{test_dir_in}/{testName}', 'r') as test_input_file:
-                test_input = test_input_file.read()
+                test_input = test_input_file.read().strip()
             with open(f'{test_dir_out}/{testName}', 'r') as test_output_file:
-                test_expected_output = test_output_file.read()
+                test_expected_output = test_output_file.read().strip()
 
             if part == '1':
                 test_output = str(dayModule.p1(test_input))
@@ -50,7 +50,11 @@ for yearDir in os.scandir('./src/solutions'):
     for dayFile in os.scandir(f'./src/solutions/{yearDir.name}'):
         if not os.path.isfile(dayFile.path):
             continue
-        day = re.findall('d(\d\d).py', dayFile.name)[0]
+        dayMatches = re.findall('d(\d\d).py', dayFile.name)
+        # Skip if not a day file.
+        if not dayMatches:
+            continue
+        day = dayMatches[0]
         daySpec = importlib.util.spec_from_file_location(
             f'{yearDir.name}.{dayFile.name}',
             f'./src/solutions/{yearDir.name}/{dayFile.name}'
@@ -64,7 +68,7 @@ for yearDir in os.scandir('./src/solutions'):
         p2_test_success = run_tests(dayModule, year, day, '2')
 
         with open(f'./inputs/{year}/{day}.txt', 'r') as input_file:
-            input_string = input_file.read()
+            input_string = input_file.read().strip()
 
             output_p1 = str(dayModule.p1(input_string))
             if p1_test_success:

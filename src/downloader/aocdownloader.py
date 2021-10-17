@@ -110,12 +110,14 @@ def download_missing_day_inputs() -> None:
 
     for yearDir in os.scandir('./src/solutions'):
         year = re.findall('y(\d\d\d\d)', yearDir.name)[0]
-        # print(year)
         for dayFile in os.scandir(f'./src/solutions/{yearDir.name}'):
             if not os.path.isfile(dayFile.path):
                 continue
-            day = re.findall('d(\d\d).py', dayFile.name)[0]
-            # print(day)
+            dayMatches = re.findall('d(\d\d).py', dayFile.name)
+            # Skip if not a day file.
+            if not dayMatches:
+                continue
+            day = dayMatches[0]
             if not os.path.exists(f'./inputs/{year}/{day}.txt'):
                 print(f'Adding input {year}.{day} to the download queue.')
                 to_download_inputs.append((int(year), int(day)))
