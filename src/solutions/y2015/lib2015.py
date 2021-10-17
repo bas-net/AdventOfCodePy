@@ -1,7 +1,4 @@
 from typing import Callable
-from os import linesep
 
-
-def process_by_line(input: str, function: Callable[[str], None]):
-    for line in input.split('\n'):
-        function(line)
+def process_by_line_aggregate(input: str, function: Callable[[str], int], aggregation: Callable[[int], int]):
+    return aggregation([function(line) for line in input.split('\n')])
