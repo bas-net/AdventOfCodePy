@@ -2,14 +2,6 @@ from typing import List
 import solutions.y2015.lib2015
 
 
-def get_dimensions(package: str) -> List[int]:
-    return list(map(int, package.split('x')))
-
-
-def move_smallest_side_to_start(sides: List[int]) -> None:
-    sides.sort()
-
-
 def p1(input: str) -> str:
     def func(package: str) -> int:
         dimensions = get_dimensions(package)
@@ -40,3 +32,11 @@ def p2(input: str) -> str:
         return perimeter + ribbon
 
     return solutions.y2015.lib2015.process_by_line_aggregate(input, func, sum)
+
+
+def get_dimensions(package: str) -> List[int]:
+    return list(map(int, package.split('x')))
+
+
+def move_smallest_side_to_start(sides: List[int]) -> None:
+    sides.sort()
