@@ -1,5 +1,4 @@
 import solutions.y2015.lib2015
-from collections import defaultdict
 
 def p1(input: str) -> str:
     def func(string: str) -> int:
