@@ -11,6 +11,8 @@ from requests.sessions import Session
 from azure.keyvault.secrets import SecretClient, KeyVaultSecret
 from azure.identity import VisualStudioCodeCredential
 
+from lib import get_solutions
+
 
 def get_config() -> ConfigParser:
     cfg = ConfigParser()
@@ -115,24 +117,14 @@ def download_missing_day_inputs() -> None:
     with open('./src/downloader/blacklist.json', 'r', encoding='utf-8') as blacklist_json:
         blacklist = json.load(blacklist_json)
 
-    for year_dir in os.scandir('./src/solutions'):
-        year = re.findall(r'y(\d\d\d\d)', year_dir.name)[0]
-        for day_file in os.scandir(f'./src/solutions/{year_dir.name}'):
-            if not os.path.isfile(day_file.path):
+    for (_, _, year, day) in get_solutions():
+        if year in blacklist['blacklisted_days']:
+            if day in blacklist['blacklisted_days'][year]:
                 continue
-            day_matches = re.findall(r'd(\d\d).py', day_file.name)
-            # Skip if not a day file.
-            if not day_matches:
-                continue
-            day = day_matches[0]
 
-            if year in blacklist['blacklisted_days']:
-                if day in blacklist['blacklisted_days'][year]:
-                    continue
-
-            if not os.path.exists(f'./inputs/{year}/{day}.txt'):
-                print(f'Adding input {year}.{day} to the download queue.')
-                to_download_inputs.append((int(year), int(day)))
+        if not os.path.exists(f'./inputs/{year}/{day}.txt'):
+            print(f'Adding input {year}.{day} to the download queue.')
+            to_download_inputs.append((int(year), int(day)))
 
     if len(to_download_inputs) > 0:
         print('Downloading...')

@@ -9,4 +9,5 @@ good-names=i, j, k, x, y, p1, p2, c
 disable=
     missing-module-docstring,
     missing-function-docstring,
-    missing-class-docstring
+    missing-class-docstring,
+    not-an-iterable

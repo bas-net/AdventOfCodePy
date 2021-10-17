@@ -1,6 +1,5 @@
 import os
 import importlib.util
-import re
 import json
 
 from types import ModuleType
@@ -8,7 +7,7 @@ from enum import Enum
 
 from downloader.aocdownloader import download_missing_day_inputs
 
-from lib import print_red, print_cyan, print_green, print_light_purple, print_yellow
+from lib import print_red, print_cyan, print_green, print_light_purple, print_yellow, get_solutions
 
 
 class TestStatus(Enum):
@@ -78,46 +77,36 @@ def run_solutions():
     with open('./src/blacklist.json', encoding='utf-8') as blacklist_json:
         blacklist = json.load(blacklist_json)
 
-    for year_dir in os.scandir('./src/solutions'):
-        year = re.findall(r'y(\d\d\d\d)', year_dir.name)[0]
-        for day_file in os.scandir(f'./src/solutions/{year_dir.name}'):
-            if not os.path.isfile(day_file.path):
-                continue
-            day_matches = re.findall(r'd(\d\d).py', day_file.name)
-            # Skip if not a day file.
-            if not day_matches:
-                continue
-            day = day_matches[0]
+    for (year_dir_name, day_file_name, year, day) in get_solutions():
+        day_spec = importlib.util.spec_from_file_location(
+            f'{year_dir_name}.{day_file_name}',
+            f'./src/solutions/{year_dir_name}/{day_file_name}'
+        )
+        day_module = importlib.util.module_from_spec(day_spec)
+        day_spec.loader.exec_module(day_module)
 
-            day_spec = importlib.util.spec_from_file_location(
-                f'{year_dir.name}.{day_file.name}',
-                f'./src/solutions/{year_dir.name}/{day_file.name}'
-            )
-            day_module = importlib.util.module_from_spec(day_spec)
-            day_spec.loader.exec_module(day_module)
+        print_cyan(f'Running {year}.{day}')
 
-            print_cyan(f'Running {year}.{day}')
+        run_p1 = True
+        run_p2 = True
 
-            run_p1 = True
-            run_p2 = True
+        # Handle blacklisting
+        if year in blacklist['blacklisted_day_parts']:
+            if day in blacklist['blacklisted_day_parts'][year]:
+                if '1' in blacklist['blacklisted_day_parts'][year][day]:
+                    run_p1 = False
+                if '2' in blacklist['blacklisted_day_parts'][year][day]:
+                    run_p2 = False
 
-            # Handle blacklisting
-            if year in blacklist['blacklisted_day_parts']:
-                if day in blacklist['blacklisted_day_parts'][year]:
-                    if '1' in blacklist['blacklisted_day_parts'][year][day]:
-                        run_p1 = False
-                    if '2' in blacklist['blacklisted_day_parts'][year][day]:
-                        run_p2 = False
+        if run_p1:
+            run_day_part(day_module, year, day, '1')
+        else:
+            print_light_purple(f'  {year}.{day}.1 skipped')
 
-            if run_p1:
-                run_day_part(day_module, year, day, '1')
-            else:
-                print_light_purple(f'  {year}.{day}.1 skipped')
-
-            if run_p2:
-                run_day_part(day_module, year, day, '2')
-            else:
-                print_light_purple(f'  {year}.{day}.2 skipped')
+        if run_p2:
+            run_day_part(day_module, year, day, '2')
+        else:
+            print_light_purple(f'  {year}.{day}.2 skipped')
 
 
 download_missing_day_inputs()

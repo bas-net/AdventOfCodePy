@@ -4,7 +4,8 @@ config.ini
 # Ignore the inputs, they are downloaded automatically.
 inputs
 
-
+# Ignore VSCode Counter Extension ouput
+.VSCodeCounter
 
 
 # Created by https://www.toptal.com/developers/gitignore/api/python,visualstudiocode
