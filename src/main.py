@@ -1,5 +1,6 @@
 from types import ModuleType
 from downloader.aocdownloader import download_missing_day_inputs
+from enum import Enum
 import os
 import importlib.util
 import re
@@ -8,10 +9,18 @@ import re
 def prRed(skk): print("\033[91m {}\033[00m" .format(skk))
 def prGreen(skk): print("\033[92m {}\033[00m" .format(skk))
 def prCyan(skk): print("\033[96m {}\033[00m" .format(skk))
+def prYellow(skk): print("\033[93m {}\033[00m" .format(skk))
 
 
-def run_tests(dayModule: ModuleType, year: str, day: str, part: str) -> bool:
+class TestStatus(Enum):
+    FAIL = 0,
+    SUCCESS = 1,
+    NO_TESTS = 2,
+
+
+def run_tests(dayModule: ModuleType, year: str, day: str, part: str) -> TestStatus:
     all_tests_green = True
+    test_count = 0
 
     test_dir = f'./tests/{year}/{day}/{part}'
     test_dir_in = f'{test_dir}/in'
@@ -33,6 +42,8 @@ def run_tests(dayModule: ModuleType, year: str, day: str, part: str) -> bool:
             else:
                 raise 'Error'
 
+            test_count += 1
+
             if test_output == test_expected_output:
                 prGreen(testDescr + ' succeeded')
             else:
@@ -40,7 +51,7 @@ def run_tests(dayModule: ModuleType, year: str, day: str, part: str) -> bool:
                 prRed(
                     f'{testDescr} failed. Got \'{test_output}\', expected \'{test_expected_output}\'')
 
-    return all_tests_green
+    return TestStatus.FAIL if not all_tests_green else TestStatus.SUCCESS if test_count > 0 else TestStatus.NO_TESTS
 
 
 download_missing_day_inputs()
@@ -64,20 +75,24 @@ for yearDir in os.scandir('./src/solutions'):
 
         prCyan(f'Running {year}.{day}')
 
-        p1_test_success = run_tests(dayModule, year, day, '1')
-        p2_test_success = run_tests(dayModule, year, day, '2')
+        p1_test_result = run_tests(dayModule, year, day, '1')
+        p2_test_result = run_tests(dayModule, year, day, '2')
 
         with open(f'./inputs/{year}/{day}.txt', 'r') as input_file:
             input_string = input_file.read().strip()
 
             output_p1 = str(dayModule.p1(input_string))
-            if p1_test_success:
+            if p1_test_result == TestStatus.SUCCESS:
                 prGreen(f'  {year}.{day}.1 result \'{output_p1}\'')
-            else:
+            elif p1_test_result == TestStatus.FAIL:
                 prRed(f'  {year}.{day}.1 result \'{output_p1}\'')
+            else:
+                prYellow(f'  {year}.{day}.1 result \'{output_p1}\'')
 
             output_p2 = str(dayModule.p2(input_string))
-            if p2_test_success:
+            if p2_test_result == TestStatus.SUCCESS:
                 prGreen(f'  {year}.{day}.2 result \'{output_p2}\'')
-            else:
+            elif p2_test_result == TestStatus.FAIL:
                 prRed(f'  {year}.{day}.2 result \'{output_p2}\'')
+            else:
+                prYellow(f'  {year}.{day}.2 result \'{output_p2}\'')

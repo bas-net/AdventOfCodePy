@@ -12,4 +12,9 @@ def p1(input: str) -> str:
 
 
 def p2(input: str) -> str:
-    pass
+    i = 0
+    hash = hashlib.md5(f'{input}{i}'.encode('utf-8')).hexdigest()
+    while hash[0:6] != ('0' * 6):
+        i += 1
+        hash = hashlib.md5(f'{input}{i}'.encode('utf-8')).hexdigest()
+    return i
