@@ -38,3 +38,6 @@ def p2(input: str) -> str:
     pass
 " -replace "`r`n","`n" -replace "`n","`r`n" | Set-Content -Force -Path $path -NoNewline
 ```
+
+## Code duplicity
+`pylint --disable=all --enable=duplicate-code src/`

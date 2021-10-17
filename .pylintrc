@@ -1,0 +1,11 @@
+[MASTER]
+init-hook='import sys; sys.path.append("src/")'
+
+[BASIC]
+# Good variable names which should always be accepted, separated by a comma.
+good-names=i, j, k, x, y, p1, p2, c
+
+[CONVENTION]
+disable=
+    missing-module-docstring,
+    missing-function-docstring

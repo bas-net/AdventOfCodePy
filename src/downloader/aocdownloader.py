@@ -1,13 +1,15 @@
-from typing import Tuple
-from azure.keyvault.secrets import SecretClient, KeyVaultSecret
-from azure.identity import VisualStudioCodeCredential
-from configparser import ConfigParser
-from requests.sessions import Session
-
 import json
 import re
 import urllib.parse
 import os
+import sys
+
+from typing import Tuple
+from configparser import ConfigParser
+from requests.sessions import Session
+
+from azure.keyvault.secrets import SecretClient, KeyVaultSecret
+from azure.identity import VisualStudioCodeCredential
 
 
 def get_config() -> ConfigParser:
@@ -15,15 +17,15 @@ def get_config() -> ConfigParser:
 
     cfg.read('config.ini')
 
-    if (len(cfg.sections()) == 0):
+    if len(cfg.sections()) == 0:
         cfg['keyvault'] = {}
         cfg['keyvault']['keyvaultname'] = '< keyvaultname >'
         cfg['keyvault']['githubusernamesecretname'] = '< githubusernamesecretname >'
         cfg['keyvault']['githubpasswordsecretname'] = '< githubpasswordsecretname >'
-        with open('config.ini', 'w') as configfile:
+        with open('config.ini', 'w', encoding='utf-8') as configfile:
             cfg.write(configfile)
         print('Config file created, please configure and re-run.')
-        exit()
+        sys.exit()
 
     return cfg
 
@@ -66,21 +68,21 @@ def authenticate_session() -> Session:
 
     (uns, pws) = get_github_secrets()
 
-    s = Session()
+    session = Session()
 
-    r = s.get('https://adventofcode.com/auth/github')
+    response = session.get('https://adventofcode.com/auth/github')
 
     authenticity_token = re.findall(
-        '"authenticity_token" value="([^"]+)"', r.text)[0]
+        '"authenticity_token" value="([^"]+)"', response.text)[0]
     timestamp_secret = re.findall(
-        '"timestamp_secret" value="([^"]+)"', r.text)[0]
+        '"timestamp_secret" value="([^"]+)"', response.text)[0]
     client_id = re.findall(
-        'client_id=([^&]+)', r.url)[0]
+        'client_id=([^&]+)', response.url)[0]
     return_to = urllib.parse.unquote(
-        re.findall('return_to=([^&]+)', r.url)[0])
+        re.findall('return_to=([^&]+)', response.url)[0])
 
     # Make the authentication request.
-    s.post('https://github.com/session', data={
+    session.post('https://github.com/session', data={
         'login': uns.value,
         'password': pws.value,
         'authenticity_token': authenticity_token,
@@ -90,7 +92,7 @@ def authenticate_session() -> Session:
         'commit': 'Sign in'
     })
 
-    return s
+    return session
 
 
 def download_day_input(session: Session, year: int, day: int) -> None:
@@ -102,7 +104,7 @@ def download_day_input(session: Session, year: int, day: int) -> None:
     if not os.path.exists(f'./inputs/{year}'):
         os.makedirs(f'./inputs/{year}')
 
-    with open(f'./inputs/{year}/{day:02}.txt', 'w') as input_file:
+    with open(f'./inputs/{year}/{day:02}.txt', 'w', encoding='utf-8') as input_file:
         input_file.write(input_request.text)
         print(input_file.name)
 
@@ -110,24 +112,24 @@ def download_day_input(session: Session, year: int, day: int) -> None:
 def download_missing_day_inputs() -> None:
     to_download_inputs = []
 
-    with open('./src/downloader/blacklist.json') as blacklist_json:
+    with open('./src/downloader/blacklist.json', 'r', encoding='utf-8') as blacklist_json:
         blacklist = json.load(blacklist_json)
 
-    for yearDir in os.scandir('./src/solutions'):
-        year = re.findall('y(\d\d\d\d)', yearDir.name)[0]
-        for dayFile in os.scandir(f'./src/solutions/{yearDir.name}'):
-            if not os.path.isfile(dayFile.path):
+    for year_dir in os.scandir('./src/solutions'):
+        year = re.findall(r'y(\d\d\d\d)', year_dir.name)[0]
+        for day_file in os.scandir(f'./src/solutions/{year_dir.name}'):
+            if not os.path.isfile(day_file.path):
                 continue
-            dayMatches = re.findall('d(\d\d).py', dayFile.name)
+            day_matches = re.findall(r'd(\d\d).py', day_file.name)
             # Skip if not a day file.
-            if not dayMatches:
+            if not day_matches:
                 continue
-            day = dayMatches[0]
+            day = day_matches[0]
 
             if year in blacklist['blacklisted_days']:
                 if day in blacklist['blacklisted_days'][year]:
                     continue
-            
+
             if not os.path.exists(f'./inputs/{year}/{day}.txt'):
                 print(f'Adding input {year}.{day} to the download queue.')
                 to_download_inputs.append((int(year), int(day)))

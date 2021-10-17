@@ -1,6 +1,6 @@
 import solutions.y2015.lib2015
 
-def p1(input: str) -> str:
+def p1(input_string: str) -> str:
     def func(string: str) -> int:
         vowel_count = 0
         has_double = False
@@ -16,10 +16,10 @@ def p1(input: str) -> str:
 
         return 1 if vowel_count >= 3 and has_double and has_no_illegal else 0
 
-    return solutions.y2015.lib2015.process_by_line_aggregate(input, func, sum)
+    return solutions.y2015.lib2015.process_by_line_aggregate(input_string, func, sum)
 
 
-def p2(input: str) -> str:
+def p2(input_string: str) -> str:
     def func(string: str) -> int:
         has_repeat_with_between = False
         has_duplicate_pair = False
@@ -38,4 +38,4 @@ def p2(input: str) -> str:
 
         return 1 if has_repeat_with_between and has_duplicate_pair else 0
 
-    return solutions.y2015.lib2015.process_by_line_aggregate(input, func, sum)
+    return solutions.y2015.lib2015.process_by_line_aggregate(input_string, func, sum)

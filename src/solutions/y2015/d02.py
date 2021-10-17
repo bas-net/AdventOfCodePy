@@ -1,8 +1,9 @@
 from typing import List
+
 import solutions.y2015.lib2015
 
 
-def p1(input: str) -> str:
+def p1(input_str: str) -> str:
     def func(package: str) -> int:
         dimensions = get_dimensions(package)
 
@@ -15,10 +16,10 @@ def p1(input: str) -> str:
         # Every side * 2, except the smallest, which has the slack, so * 3.
         return sides[0] * 3 + sides[1] * 2 + sides[2] * 2
 
-    return solutions.y2015.lib2015.process_by_line_aggregate(input, func, sum)
+    return solutions.y2015.lib2015.process_by_line_aggregate(input_str, func, sum)
 
 
-def p2(input: str) -> str:
+def p2(input_str: str) -> str:
     def func(package: str) -> int:
         dimensions = get_dimensions(package)
 
@@ -31,7 +32,7 @@ def p2(input: str) -> str:
 
         return perimeter + ribbon
 
-    return solutions.y2015.lib2015.process_by_line_aggregate(input, func, sum)
+    return solutions.y2015.lib2015.process_by_line_aggregate(input_str, func, sum)
 
 
 def get_dimensions(package: str) -> List[int]:
