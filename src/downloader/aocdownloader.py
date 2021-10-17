@@ -3,6 +3,9 @@ from azure.keyvault.secrets import SecretClient, KeyVaultSecret
 from azure.identity import VisualStudioCodeCredential
 from configparser import ConfigParser
 from requests.sessions import Session
+from types import SimpleNamespace
+
+import json
 import re
 import urllib.parse
 import os
@@ -61,7 +64,7 @@ def get_github_secrets() -> Tuple[KeyVaultSecret, KeyVaultSecret]:
 
 def authenticate_session() -> Session:
     print('Authenticating session with GitHub.')
-    
+
     (uns, pws) = get_github_secrets()
 
     s = Session()
@@ -108,6 +111,9 @@ def download_day_input(session: Session, year: int, day: int) -> None:
 def download_missing_day_inputs() -> None:
     to_download_inputs = []
 
+    with open('./src/downloader/blacklist.json') as blacklist_json:
+        blacklist = json.load(blacklist_json)
+
     for yearDir in os.scandir('./src/solutions'):
         year = re.findall('y(\d\d\d\d)', yearDir.name)[0]
         for dayFile in os.scandir(f'./src/solutions/{yearDir.name}'):
@@ -118,6 +124,11 @@ def download_missing_day_inputs() -> None:
             if not dayMatches:
                 continue
             day = dayMatches[0]
+
+            if year in blacklist['blacklisted_days']:
+                if day in blacklist['blacklisted_days'][year]:
+                    continue
+            
             if not os.path.exists(f'./inputs/{year}/{day}.txt'):
                 print(f'Adding input {year}.{day} to the download queue.')
                 to_download_inputs.append((int(year), int(day)))
