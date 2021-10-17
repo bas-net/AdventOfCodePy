@@ -1,5 +1,5 @@
 import solutions.y2015.lib2015
-
+from collections import defaultdict
 
 def p1(input: str) -> str:
     def func(string: str) -> int:
@@ -21,4 +21,22 @@ def p1(input: str) -> str:
 
 
 def p2(input: str) -> str:
-    pass
+    def func(string: str) -> int:
+        has_repeat_with_between = False
+        has_duplicate_pair = False
+        pairs_with_index = {}
+        for i, c in enumerate(string):
+            if i >= 1:
+                pair = f'{string[i-1]}{c}'
+                if pair in pairs_with_index:
+                    if pairs_with_index[pair] < i - 1:
+                        has_duplicate_pair = True
+                else:
+                    pairs_with_index[pair] = i
+            if i >= 2:
+                if c == string[i-2]:
+                    has_repeat_with_between = True
+
+        return 1 if has_repeat_with_between and has_duplicate_pair else 0
+
+    return solutions.y2015.lib2015.process_by_line_aggregate(input, func, sum)
