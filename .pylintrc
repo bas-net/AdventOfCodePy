@@ -8,4 +8,5 @@ good-names=i, j, k, x, y, p1, p2, c
 [CONVENTION]
 disable=
     missing-module-docstring,
-    missing-function-docstring
+    missing-function-docstring,
+    missing-class-docstring

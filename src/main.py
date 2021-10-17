@@ -8,25 +8,7 @@ from enum import Enum
 
 from downloader.aocdownloader import download_missing_day_inputs
 
-
-def print_red(skk):
-    print(f'\033[91m {skk}\033[00m')
-
-
-def print_green(skk):
-    print("\033[92m {}\033[00m" .format(skk))
-
-
-def print_cyan(skk):
-    print("\033[96m {}\033[00m" .format(skk))
-
-
-def print_yellow(skk):
-    print("\033[93m {}\033[00m" .format(skk))
-
-
-def print_light_purple(skk):
-    print("\033[94m {}\033[00m" .format(skk))
+from lib import print_red, print_cyan, print_green, print_light_purple, print_yellow
 
 
 class TestStatus(Enum):
@@ -43,13 +25,13 @@ def run_tests(day_module: ModuleType, year: str, day: str, part: str) -> TestSta
     test_dir_in = f'{test_dir}/in'
     test_dir_out = f'{test_dir}/out'
     if os.path.exists(test_dir_in):
-        for testFile in os.scandir(test_dir_in):
-            testName = testFile.name
-            testDescr = f'    Test {year}.{day}.{part}.{testName}'
+        for test_file in os.scandir(test_dir_in):
+            test_file_name = test_file.name
+            test_name = f'    Test {year}.{day}.{part}.{test_file_name}'
 
-            with open(f'{test_dir_in}/{testName}', 'r', encoding='utf-8') as test_input_file:
+            with open(f'{test_dir_in}/{test_file_name}', 'r', encoding='utf-8') as test_input_file:
                 test_input = test_input_file.read().strip()
-            with open(f'{test_dir_out}/{testName}', 'r', encoding='utf-8') as test_output_file:
+            with open(f'{test_dir_out}/{test_file_name}', 'r', encoding='utf-8') as test_output_file:
                 test_expected_output = test_output_file.read().strip()
 
             if part == '1':
@@ -62,11 +44,11 @@ def run_tests(day_module: ModuleType, year: str, day: str, part: str) -> TestSta
             test_count += 1
 
             if test_output == test_expected_output:
-                print_green(testDescr + ' succeeded')
+                print_green(test_name + ' succeeded')
             else:
                 all_tests_green = False
                 print_red(
-                    f'{testDescr} failed. Got \'{test_output}\', expected \'{test_expected_output}\'')
+                    f'{test_name} failed. Got \'{test_output}\', expected \'{test_expected_output}\'')
 
     return TestStatus.FAIL if not all_tests_green else TestStatus.SUCCESS if test_count > 0 else TestStatus.NO_TESTS
 
@@ -107,12 +89,12 @@ def run_solutions():
                 continue
             day = day_matches[0]
 
-            daySpec = importlib.util.spec_from_file_location(
+            day_spec = importlib.util.spec_from_file_location(
                 f'{year_dir.name}.{day_file.name}',
                 f'./src/solutions/{year_dir.name}/{day_file.name}'
             )
-            dayModule = importlib.util.module_from_spec(daySpec)
-            daySpec.loader.exec_module(dayModule)
+            day_module = importlib.util.module_from_spec(day_spec)
+            day_spec.loader.exec_module(day_module)
 
             print_cyan(f'Running {year}.{day}')
 
@@ -128,14 +110,14 @@ def run_solutions():
                         run_p2 = False
 
             if run_p1:
-                run_day_part(dayModule, year, day, '1')
+                run_day_part(day_module, year, day, '1')
             else:
                 print_light_purple(f'  {year}.{day}.1 skipped')
 
             if run_p2:
-                run_day_part(dayModule, year, day, '2')
+                run_day_part(day_module, year, day, '2')
             else:
                 print_light_purple(f'  {year}.{day}.2 skipped')
 
-download_missing_day_inputs()
 
+download_missing_day_inputs()
