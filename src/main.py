@@ -110,3 +110,5 @@ def run_solutions():
 
 
 download_missing_day_inputs()
+
+run_solutions()
