@@ -17,4 +17,24 @@ Required to make a new AAD account (like a service account) and use that to sign
 
 ## Test files
 powershell.
-`'./tests/2015/01/2/' | %{ $path=$_; 1..2 | %{ @($("$($path)in/{0:00}.txt" -f $_),$("$($path)out/{0:00}.txt" -f $_)) }} | %{ new-item $_  -Force }`
+`'./tests/2015/03/1/' | %{ $path=$_; 1..3 | %{ @($("$($path)in/{0:00}.txt" -f $_),$("$($path)out/{0:00}.txt" -f $_)) }} | %{ new-item $_  -Force }`
+
+## Day files
+```ps
+$year = '2015'
+$day = '03'
+$path = "./src/solutions/y$($year)/d$($day).py"
+
+New-Item -ItemType File -Path $path -Force | Out-Null
+
+"import solutions.y$($year).lib$($year)
+
+
+def p1(input: str) -> str:
+    pass
+
+
+def p2(input: str) -> str:
+    pass
+" | Set-Content -Force -Path $path
+```
