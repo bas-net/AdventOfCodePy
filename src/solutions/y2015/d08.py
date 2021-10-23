@@ -44,4 +44,14 @@ def p1(input_string: str) -> str:
 
 
 def p2(input_string: str) -> str:
-    pass
+    def func(string_to_escape: str) -> int:
+        count = 0 + 2
+        for c in string_to_escape:
+            if c in ['\\', '"']:
+                count += 2
+            else:
+                count += 1
+
+        return count - len(string_to_escape)
+
+    return solutions.y2015.lib2015.process_by_line_aggregate(input_string, func, sum)
