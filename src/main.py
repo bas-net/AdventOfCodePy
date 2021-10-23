@@ -85,8 +85,6 @@ def run_solutions():
         day_module = importlib.util.module_from_spec(day_spec)
         day_spec.loader.exec_module(day_module)
 
-        print_cyan(f'Running {year}.{day}')
-
         run_p1 = True
         run_p2 = True
 
@@ -97,6 +95,11 @@ def run_solutions():
                     run_p1 = False
                 if '2' in blacklist['blacklisted_day_parts'][year][day]:
                     run_p2 = False
+
+        if run_p1 or run_p2:
+            print_cyan(f'Running {year}.{day}')
+        else:
+            continue
 
         if run_p1:
             run_day_part(day_module, year, day, '1')
