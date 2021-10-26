@@ -4,7 +4,19 @@ import solutions.y2015.lib2015
 
 def p1(input_string: str) -> str:
     # print(input_string)
-    password = get_next_pwd(input_string)
+
+    # Get next password
+    # Increment
+    # Validate
+    return get_next_valid_password(input_string)
+
+
+def p2(input_string: str) -> str:
+    return get_next_valid_password(get_next_valid_password(input_string))
+
+
+def get_next_valid_password(password):
+    password = get_next_pwd(password)
     # if password == 'abcdefgi':
     #     print('good')
 
@@ -17,22 +29,14 @@ def p1(input_string: str) -> str:
         # print('run')
         # break
         password = get_next_pwd(password)
-
-    # Get next password
-    # Increment
-    # Validate
     return password
-
-
-def p2(input_string: str) -> str:
-    pass
-
 
 # Validate
 
     # Passwords must include one increasing straight of at least three letters, like abc, bcd, cde, and so on, up to xyz. They cannot skip letters; abd doesn't count.
     # Passwords may not contain the letters i, o, or l, as these letters can be mistaken for other characters and are therefore confusing.
     # Passwords must contain at least two different, non-overlapping pairs of letters, like aa, bb, or zz.
+
 
 def validate_password(password: str) -> bool:
   # print(password)
@@ -90,7 +94,7 @@ def get_next_pwd(password: str) -> str:
                 break
     if skip_from:
         next_password = next_password[:skip_from + 1] + \
-            ''.rjust(len(password) - skip_from - 1,'z')
+            ''.rjust(len(password) - skip_from - 1, 'z')
         # print(next_password)
 
     return next_password
