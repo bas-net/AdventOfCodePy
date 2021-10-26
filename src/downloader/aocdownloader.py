@@ -1,4 +1,3 @@
-import json
 import re
 import urllib.parse
 import os
@@ -114,14 +113,7 @@ def download_day_input(session: Session, year: int, day: int) -> None:
 def download_missing_day_inputs() -> None:
     to_download_inputs = []
 
-    with open('./src/downloader/blacklist.json', 'r', encoding='utf-8') as blacklist_json:
-        blacklist = json.load(blacklist_json)
-
     for (_, _, year, day) in get_solutions():
-        if year in blacklist['blacklisted_days']:
-            if day in blacklist['blacklisted_days'][year]:
-                continue
-
         if not os.path.exists(f'./inputs/{year}/{day}.txt'):
             print(f'Adding input {year}.{day} to the download queue.')
             to_download_inputs.append((int(year), int(day)))
