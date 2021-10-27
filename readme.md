@@ -45,4 +45,5 @@ def p2(input_string: str) -> str:
 
 ## Line count script
 
-Run the `filecounts.ps1`
+With my GitTools module
+Run `New-GitLineCountPerCommitFile -IncludePatterns '*.py','*.ps1','*json' -ExcludePatterns '*.vscode*' -OutputFileName 'filecounts.csv'`
