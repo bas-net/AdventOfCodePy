@@ -26,8 +26,12 @@ class PotentialPath:
 
 
 class Graph:
-    nodes: Dict[str, Node] = {}
-    vertices = []
+    nodes: Dict[str, Node]
+    vertices: List[Vertex]
+
+    def __init__(self) -> None:
+        self.nodes = {}
+        self.vertices = []
 
     def add_vertex(self, node_name_soure: str, node_name_to: str, weight: int):
         source_node = self.get_node_from_name(node_name_soure)
@@ -47,42 +51,7 @@ class Graph:
             # print(f'Createing node {node_name}')
             return node_source
 
-    def tsp_shortest_path(self) -> int:
-        """Traveling salesman problem"""
-        # print('Calculating TSP')
-        shortest = None
-
-        def get_potential_paths(node_name, visited):
-            paths = []
-            for to in self.nodes[node_name].vertices_to:
-                if to not in visited:
-                    this_path = [x for x in visited]
-                    this_path.append(to)
-                    for x in get_potential_paths(to, this_path):
-                        paths.append(x)
-            if len(paths) > 0:
-                return paths
-            else:
-                return [visited]
-
-        paths = []
-        for start_node in self.nodes:
-            for x in [x for x in get_potential_paths(start_node, [start_node])]:
-                paths.append(x)
-
-        for path in paths:
-            # print(path)
-            try:
-                length = sum(self.nodes[path[i]].vertices_to[path[i + 1]]
-                             for i in range(len(path) - 1))
-                if shortest is None or shortest > length:
-                    shortest = length
-            except KeyError:
-                pass
-
-        return shortest
-
-    def tsp_longest_path(self) -> int:
+    def tsp_longest_path_round(self) -> int:
         """Traveling salesman problem"""
         # print('Calculating TSP')
         longest = None
@@ -108,6 +77,41 @@ class Graph:
 
         for path in paths:
             # print(path)
+            try:
+                length = sum(self.nodes[path[i]].vertices_to[path[i + 1]]
+                             for i in range(len(path) - 1))
+                if longest is None or longest < length:
+                    longest = length
+                    # print(path)
+            except KeyError:
+                pass
+
+        return longest
+
+    def tsp_longest_path(self) -> int:
+        """Traveling salesman problem"""
+        # print('Calculating TSP')
+        longest = None
+
+        def get_potential_paths(node_name, visited):
+            paths = []
+            for to in self.nodes[node_name].vertices_to:
+                if to not in visited:
+                    this_path = [x for x in visited]
+                    this_path.append(to)
+                    for x in get_potential_paths(to, this_path):
+                        paths.append(x)
+            if len(paths) > 0:
+                return paths
+            else:
+                return [visited]
+
+        paths = []
+        for start_node in self.nodes:
+            for x in [x for x in get_potential_paths(start_node, [start_node])]:
+                paths.append(x)
+
+        for path in paths:
             try:
                 length = sum(self.nodes[path[i]].vertices_to[path[i + 1]]
                              for i in range(len(path) - 1))
@@ -157,9 +161,30 @@ def p1(input_string: str) -> str:
         graph.add_vertex(edge.split('&')[1], edge.split('&')[0], x[edge])
 
     # print(x)
-    
-    return graph.tsp_longest_path()
+
+    return graph.tsp_longest_path_round()
 
 
 def p2(input_string: str) -> str:
-    pass
+    def extract(i: str) -> Line:
+        matches = re.search(
+            r'(?P<name>\w+) would (?P<action>\w+) (?P<change>\d+) happiness units by sitting next to (?P<namenextto>\w+).', i)
+
+        return Line(matches.group('name'), matches.group('namenextto'), matches.group('action'), int(matches.group('change')))
+
+    lines = solutions.y2015.lib2015.process_by_line_aggregate(
+        input_string, extract, list)
+
+    x = defaultdict(lambda: 0)
+    for y in lines:
+        x[y.get_key_from_to()] += y.get_change()
+
+    graph = Graph()
+    edge: str
+    for edge in x:
+        graph.add_vertex(edge.split('&')[0], edge.split('&')[1], x[edge])
+        graph.add_vertex(edge.split('&')[1], edge.split('&')[0], x[edge])
+
+    # print(x)
+
+    return graph.tsp_longest_path()
