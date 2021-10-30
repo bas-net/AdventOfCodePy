@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-import dataclasses
 from typing import Callable, Dict, List
 
 
@@ -54,37 +53,36 @@ class Graph:
     def get_node_from_name(self, node_name):
         if node_name in self.nodes:
             return self.nodes[node_name]
-        else:
-            node_source = Node(node_name)
-            self.nodes[node_name] = node_source
-            # print(f'Createing node {node_name}')
-            return node_source
+
+        node_source = Node(node_name)
+
+        self.nodes[node_name] = node_source
+
+        return node_source
 
     def tsp_shortest_path(self) -> int:
         """Traveling salesman problem"""
-        # print('Calculating TSP')
         shortest = None
 
         def get_potential_paths(node_name, visited):
             paths = []
             for to in self.nodes[node_name].vertices_to:
                 if to not in visited:
-                    this_path = [x for x in visited]
+                    this_path = list(visited)
                     this_path.append(to)
                     for x in get_potential_paths(to, this_path):
                         paths.append(x)
             if len(paths) > 0:
                 return paths
-            else:
-                return [visited]
+
+            return [visited]
 
         paths = []
         for start_node in self.nodes:
-            for x in [x for x in get_potential_paths(start_node, [start_node])]:
+            for x in get_potential_paths(start_node, [start_node]):
                 paths.append(x)
 
         for path in paths:
-            # print(path)
             try:
                 length = sum(self.nodes[path[i]].vertices_to[path[i + 1]]
                              for i in range(len(path) - 1))
@@ -104,29 +102,27 @@ class Graph:
             paths = []
             for to in self.nodes[node_name].vertices_to:
                 if to not in visited:
-                    this_path = [x for x in visited]
+                    this_path = list(visited)
                     this_path.append(to)
                     for x in get_potential_paths(to, this_path):
                         paths.append(x)
             if len(paths) > 0:
                 return paths
-            else:
-                return [visited]
+
+            return [visited]
 
         paths = []
         for start_node in self.nodes:
-            for x in [x for x in get_potential_paths(start_node, [start_node])]:
+            for x in get_potential_paths(start_node, [start_node]):
                 x.append(start_node)
                 paths.append(x)
 
         for path in paths:
-            # print(path)
             try:
                 length = sum(self.nodes[path[i]].vertices_to[path[i + 1]]
                              for i in range(len(path) - 1))
                 if longest is None or longest < length:
                     longest = length
-                    # print(path)
             except KeyError:
                 pass
 
@@ -134,25 +130,24 @@ class Graph:
 
     def tsp_longest_path(self) -> int:
         """Traveling salesman problem"""
-        # print('Calculating TSP')
         longest = None
 
         def get_potential_paths(node_name, visited):
             paths = []
             for to in self.nodes[node_name].vertices_to:
                 if to not in visited:
-                    this_path = [x for x in visited]
+                    this_path = list(visited)
                     this_path.append(to)
                     for x in get_potential_paths(to, this_path):
                         paths.append(x)
             if len(paths) > 0:
                 return paths
-            else:
-                return [visited]
+
+            return [visited]
 
         paths = []
         for start_node in self.nodes:
-            for x in [x for x in get_potential_paths(start_node, [start_node])]:
+            for x in get_potential_paths(start_node, [start_node]):
                 paths.append(x)
 
         for path in paths:
@@ -161,7 +156,6 @@ class Graph:
                              for i in range(len(path) - 1))
                 if longest is None or longest < length:
                     longest = length
-                    # print(path)
             except KeyError:
                 pass
 

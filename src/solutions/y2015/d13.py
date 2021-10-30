@@ -1,6 +1,5 @@
-from typing import Dict, List, Tuple
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from collections import defaultdict
 
 from solutions.y2015.lib2015 import Graph, process_by_line_aggregate

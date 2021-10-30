@@ -24,7 +24,7 @@ def do_stuff(instructions: str, number_of_walkers: int) -> int:
         coords[coord_under_edit] = determine_instruction_result(
             coords[coord_under_edit],
             instr)
-        
+
         visited_count[coords[coord_under_edit]] += 1
 
     return len(visited_count)

@@ -1,6 +1,3 @@
-import solutions.y2015.lib2015
-
-
 def p1(input_string: str) -> str:
     out = input_string
     for _ in range(40):

@@ -1,5 +1,3 @@
-import solutions.y2015.lib2015
-
 import re
 import json
 
@@ -12,21 +10,22 @@ def p2(input_string: str) -> str:
     return get_sum(json.loads(input_string))
 
 
-def get_sum(json):
+def get_sum(json_dict):
     total = 0
-    if type(json) is list:
-        for x in json:
-            if type(x) is int:
+    if isinstance(json_dict, list):
+        for x in json_dict:
+            if isinstance(x, int):
                 total += x
-            elif type(x) is dict or type(x) is list:
+            elif isinstance(x, (dict, list)):
                 total += get_sum(x)
-    if isinstance(json, dict):
-        for key in json:
-            if json[key] == 'red':
+    elif isinstance(json_dict, dict):
+        for key in json_dict:
+            if json_dict[key] == 'red':
                 return 0
-            elif isinstance(json[key], int):
-                total += json[key]
-            elif isinstance(json[key], list) or isinstance(json[key], dict):
-                total += get_sum(json[key])
+
+            if isinstance(json_dict[key], int):
+                total += json_dict[key]
+            elif isinstance(json_dict[key], (list, dict)):
+                total += get_sum(json_dict[key])
 
     return total

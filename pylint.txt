@@ -1,0 +1,17 @@
+************* Module src.main
+src\main.py:19:0: R0914: Too many local variables (17/15) (too-many-locals)
+************* Module src.solutions.y2015.d07
+src\solutions\y2015\d07.py:6:0: R0915: Too many statements (57/50) (too-many-statements)
+src\solutions\y2015\d07.py:91:0: R0915: Too many statements (58/50) (too-many-statements)
+************* Module src.solutions.y2015.d08
+src\solutions\y2015\d08.py:5:4: R0912: Too many branches (14/12) (too-many-branches)
+************* Module src.solutions.y2016.d01
+src\solutions\y2016\d01.py:1:7: W0613: Unused argument 'input_string' (unused-argument)
+src\solutions\y2016\d01.py:4:7: W0613: Unused argument 'input_string' (unused-argument)
+
+------------------------------------------------------------------
+
+Your code has been rated at 9.93/10 (previous run: 9.80/10, +0.12)
+
+
+
