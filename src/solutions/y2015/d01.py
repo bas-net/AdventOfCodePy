@@ -1,4 +1,4 @@
-from typing import List
+from typing import Any, Callable, Dict, List, Union
 
 
 def p1(input_string: str) -> str:
@@ -6,19 +6,31 @@ def p1(input_string: str) -> str:
 
 
 def p2(input_string: str) -> str:
-    pointer = 0
-    index = 1
-
-    # TODO Possibly some kind of "run till sum/aggregation = or is less than more than/lambda expr"
-    for i in convert_parentheses_to_ints(input_string):
-        pointer += i
-        if pointer < 0:
-            return index
-        index += 1
-
-    raise Exception('Invalid state')
+    return find_index_with_state(
+        convert_parentheses_to_ints(input_string),
+        state=lambda s, i: i if s is None else s + i,
+        predicate=lambda s: s < 0
+    ) + 1
 
 
-# TODO Possibly turn to a generic "character to int mapping"
 def convert_parentheses_to_ints(input_string: str) -> List[int]:
-    return [1 if x == '(' else -1 if x == ')' else 0 for x in input_string]
+    return map_dict_to_list({
+        '(': 1,
+        ')': -1
+    }, input_string)
+
+
+def map_dict_to_list(mapping: Dict[str, int], characters: Union[str, List]):
+    return map(mapping.get, characters)
+
+
+def find_index_with_state(
+        data: List[Any],
+        state: Callable[[Any, Any], Any],
+        predicate: Callable[[Any], bool]
+) -> int:
+    state_data = None
+    for i, e in enumerate(data):
+        state_data = state(state_data, e)
+        if predicate(state_data):
+            return i

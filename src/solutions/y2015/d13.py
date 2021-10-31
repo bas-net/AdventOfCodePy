@@ -41,8 +41,6 @@ def p1(input_string: str) -> str:
         graph.add_vertex(edge.split('&')[0], edge.split('&')[1], x[edge])
         graph.add_vertex(edge.split('&')[1], edge.split('&')[0], x[edge])
 
-    # print(x)
-
     return graph.tsp_longest_path_round()
 
 
@@ -65,7 +63,5 @@ def p2(input_string: str) -> str:
     for edge in x:
         graph.add_vertex(edge.split('&')[0], edge.split('&')[1], x[edge])
         graph.add_vertex(edge.split('&')[1], edge.split('&')[0], x[edge])
-
-    # print(x)
 
     return graph.tsp_longest_path()
