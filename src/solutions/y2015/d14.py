@@ -17,7 +17,7 @@ def p2(input_string: str) -> str:
     distances = {}
     for reindeer in reindeers:
         distances[reindeer[0]] = (0, 0, 'FLYING')
-    
+
     points = {}
     for reindeer in reindeers:
         points[reindeer[0]] = 0
@@ -26,16 +26,19 @@ def p2(input_string: str) -> str:
         for reindeer in reindeers:
             current = distances[reindeer[0]]
             if current[2] == 'FLYING' and current[1] < reindeer[2]:
-                distances[reindeer[0]] = (current[0] + reindeer[1], current[1] + 1, 'FLYING')
+                distances[reindeer[0]] = (
+                    current[0] + reindeer[1], current[1] + 1, 'FLYING')
             elif current[2] == 'FLYING' and current[1] == reindeer[2]:
                 distances[reindeer[0]] = (current[0], 1, 'RESTING')
             elif current[2] == 'RESTING' and current[1] < reindeer[3]:
-                distances[reindeer[0]] = (current[0], current[1] + 1, 'RESTING')
+                distances[reindeer[0]] = (
+                    current[0], current[1] + 1, 'RESTING')
             elif current[2] == 'RESTING' and current[1] == reindeer[3]:
-                distances[reindeer[0]] = (current[0] + reindeer[1], 1, 'FLYING')
+                distances[reindeer[0]] = (
+                    current[0] + reindeer[1], 1, 'FLYING')
             else:
                 raise Exception()
-        
+
         max_dist = max([x[0] for x in distances.values()])
         for reindeer_name, information in distances.items():
             if information[0] == max_dist:
