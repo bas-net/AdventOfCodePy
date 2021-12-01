@@ -3,7 +3,7 @@ init-hook='import sys; sys.path.append("src/")'
 
 [BASIC]
 # Good variable names which should always be accepted, separated by a comma.
-good-names=i, j, k, x, y, p1, p2, c, x1, x2, y1, y2, xs, ys, g, n0, n1, n2, c0, c1, c2, to, e
+good-names=i, j, k, x, y, p1, p2, c, x1, x2, y1, y2, xs, ys, g, n0, n1, n2, c0, c1, c2, to, e, p
 
 [CONVENTION]
 disable=

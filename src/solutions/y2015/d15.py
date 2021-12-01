@@ -1,9 +1,10 @@
 import enum
 import re
-from typing import Dict, List
+from typing import Any, Callable, Dict, List, Pattern, Tuple, Union
 from solutions.y2015.lib2015 import process_by_line
 import itertools
 from collections import defaultdict
+from solutions.sharedlib import get_dict_from_string
 
 
 def p1(input_string: str) -> str:
@@ -57,18 +58,19 @@ def p2(input_string: str) -> str:
     return max_result
 
 
+
+
 def get_ingredient(input_string: str) -> Dict:
-    m = re.search(
-        r'(?P<name>\w+): capacity (?P<capacity>[\-\d]+), durability (?P<durability>[\-\d]+), flavor (?P<flavor>[\-\d]+), texture (?P<texture>[\-\d]+), calories (?P<calories>[\-\d]+)', input_string)
-    g = m.groupdict()
-    return {
-        'name': g['name'],
-        'capacity': int(g['capacity']),
-        'durability': int(g['durability']),
-        'flavor': int(g['flavor']),
-        'texture': int(g['texture']),
-        'calories': int(g['calories']),
-    }
+    return get_dict_from_string(
+        r'(\w+): capacity ([\-\d]+), durability ([\-\d]+), flavor ([\-\d]+), texture ([\-\d]+), calories ([\-\d]+)',
+        [
+            ('name', str),
+            ('capacity', int),
+            ('durability', int),
+            ('flavor', int),
+            ('texture', int),
+            ('calories', int),
+        ], input_string)
 
 
 def get_total_attributes(ingredients: List[Dict], multipliers: List[int], with_calories: bool = False) -> Dict:
