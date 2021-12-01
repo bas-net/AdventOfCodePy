@@ -1,10 +1,13 @@
+from typing import List
 import solutions.y2021.lib2021
+from solutions.sharedlib import input_ints
 
 
-def p1(input_string: str) -> str:
+@input_ints
+def p1(ints: List[int]) -> str:
     p = None
     c = 0
-    for x in map(int, input_string.split('\n')):
+    for x in ints:
         if not p:
             p = x
         else:
@@ -14,10 +17,10 @@ def p1(input_string: str) -> str:
     return c
 
 
-def p2(input_string: str) -> str:
+@input_ints
+def p2(data: List[int]) -> str:
     p = None
     c = 0
-    data = list(map(int, input_string.split('\n')))
     for i in range(len(data) - 2):
         x = data[i] + data[i+1] + data[i+2]
         if not p:

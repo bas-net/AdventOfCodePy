@@ -63,7 +63,7 @@ def run_day_part(day_module: ModuleType, year: str, day: str, part: str) -> None
         elif part == '2':
             output = str(day_module.p2(input_string))
         else:
-            Exception('Error')
+            raise Exception('Error')
 
         if test_result == TestStatus.SUCCESS:
             print_green(f'  {year}.{day}.{part} result \'{output}\'')
@@ -74,8 +74,11 @@ def run_day_part(day_module: ModuleType, year: str, day: str, part: str) -> None
 
 
 def run_solutions():
-    with open('./src/blacklist.json', encoding='utf-8') as blacklist_json:
-        blacklist = json.load(blacklist_json)
+    try:
+        with open('./src/blacklist.json', encoding='utf-8') as blacklist_json:
+            blacklist = json.load(blacklist_json)
+    except FileNotFoundError:
+        blacklist = {'blacklisted_day_parts': []}
 
     for (year_dir_name, day_file_name, year, day) in get_solutions():
         day_spec = importlib.util.spec_from_file_location(
@@ -89,12 +92,11 @@ def run_solutions():
         run_p2 = True
 
         # Handle blacklisting
-        if year in blacklist['blacklisted_day_parts']:
-            if day in blacklist['blacklisted_day_parts'][year]:
-                if '1' in blacklist['blacklisted_day_parts'][year][day]:
-                    run_p1 = False
-                if '2' in blacklist['blacklisted_day_parts'][year][day]:
-                    run_p2 = False
+        if year in blacklist['blacklisted_day_parts'] and day in blacklist['blacklisted_day_parts'][year]:
+            if '1' in blacklist['blacklisted_day_parts'][year][day]:
+                run_p1 = False
+            if '2' in blacklist['blacklisted_day_parts'][year][day]:
+                run_p2 = False
 
         if run_p1 or run_p2:
             print_cyan(f'Running {year}.{day}')

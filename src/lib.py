@@ -1,6 +1,6 @@
 import os
 import re
-from typing import List, Tuple
+from typing import Any, Callable, List, Tuple
 
 NORMAL = '\033[00m'
 
@@ -41,7 +41,12 @@ def get_solutions() -> List[Tuple[str, str, str, str]]:
     solutions_path = './src/solutions'
 
     for year_dir in os.scandir(solutions_path):
-        year = re.findall(r'y(\d\d\d\d)', year_dir.name)[0]
+        r = re.findall(r'y(\d\d\d\d)', year_dir.name)
+
+        if len(r) != 1:
+            continue
+
+        year = r[0]
         for day_file in os.scandir(f'{solutions_path}/{year_dir.name}'):
             if not os.path.isfile(day_file.path):
                 continue

@@ -36,7 +36,7 @@ def p1(input_string: str) -> str:
                     inmem_count += 1
                     state = 'NORMAL'
                 else:
-                    Exception()
+                    raise Exception()
 
         return len(string_to_parse) - inmem_count
 
