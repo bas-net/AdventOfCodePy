@@ -1,13 +1,18 @@
-from solutions.sharedlib import get_dict_from_string
+from typing import Dict, List
+from solutions.sharedlib import get_dict_from_string, input_dict
 import solutions.y2021.lib2021
 
 
-def p1(input_string: str) -> str:
+@input_dict(
+    r'(\w+) (\d+)', [
+        ('direction', str),
+        ('amount', int),
+    ]
+)
+def p1(instrs: List[Dict]) -> str:
     horizontal_position = 0
     depth = 0
-    for line in input_string.split('\n'):
-        instr = get_dict_from_string(
-            r'(\w+) (\d+)', [('direction', str), ('amount', int)], line)
+    for instr in instrs:
         if instr['direction'] == 'forward':
             horizontal_position += instr['amount']
         elif instr['direction'] == 'down':
@@ -20,13 +25,17 @@ def p1(input_string: str) -> str:
     return horizontal_position * depth
 
 
-def p2(input_string: str) -> str:
+@input_dict(
+    r'(\w+) (\d+)', [
+        ('direction', str),
+        ('amount', int),
+    ]
+)
+def p2(instrs: List[Dict]) -> str:
     horizontal_position = 0
     aim = 0
     depth = 0
-    for line in input_string.split('\n'):
-        instr = get_dict_from_string(
-            r'(\w+) (\d+)', [('direction', str), ('amount', int)], line)
+    for instr in instrs:
         if instr['direction'] == 'forward':
             horizontal_position += instr['amount']
             depth += aim * instr['amount']

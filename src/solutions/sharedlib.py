@@ -34,3 +34,22 @@ def get_dict_from_string(
         result[name] = func(groups[i])
 
     return result
+
+
+def input_dict(
+    regex: Union[str, Pattern],
+    properties: List[Tuple[str, Callable]]
+) -> Callable[[Callable[[List[int]], str]], str]:
+    def decorator(func: Callable[[List[int]], str]) -> Callable[[str], str]:
+        def inner(input_string: str) -> str:
+            return func(
+                list(
+                    map(
+                        lambda line: get_dict_from_string(
+                            regex, properties, line),
+                        input_string.split('\n')
+                    )
+                )
+            )
+        return inner
+    return decorator
