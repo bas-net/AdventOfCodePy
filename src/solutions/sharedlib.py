@@ -53,3 +53,9 @@ def input_dict(
             )
         return inner
     return decorator
+
+
+def input_strings(func: Callable[[List[str]], str]) -> Callable[[str], str]:
+    def inner(input_string: str) -> str:
+        return func(input_string.split('\n'))
+    return inner

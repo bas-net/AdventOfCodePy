@@ -1,42 +1,53 @@
-import solutions.y2021.lib2021
-from solutions.sharedlib import get_dict_from_string, input_dict
 import re
+from typing import Callable, Dict, List
+
+from solutions.sharedlib import input_strings
+
 BOARD_WIDTH = 5
 BOARD_HEIGHT = 5
 
 
-def p1(input_string: str) -> str:
-    lines = input_string.split('\n')
-    numbers = lines[0]
-    boards = lines[2:]
+@input_strings
+def p1(lines) -> str:
+    return run_bingo(
+        lines,
+        lambda board, called_numbers, number, _: (True, get_score(board, called_numbers, number)))
 
-    board_dicts = get_boards(boards)
+
+@input_strings
+def p2(lines: List[str]) -> str:
+    def handler(board, called_numbers, number, boards: List[Dict]):
+        if len(boards) == 1:
+            return (True, get_score(board, called_numbers, number))
+        boards.remove(board)
+        return (False, 0)
+
+    return run_bingo(lines, handler)
+
+
+def get_callable_numbers(number_line):
+    return map(int, number_line.split(','))
+
+
+def run_bingo(lines, on_board_completion: Callable):
+    number_line, board_lines = split_boards_and_numbers_lines(lines)
+
+    numbers_to_call = get_callable_numbers(number_line)
+    boards = get_boards(board_lines)
 
     pulled_numbers = set()
-    for number in map(int, numbers.split(',')):
+    for number in numbers_to_call:
         pulled_numbers.add(number)
-        for board in board_dicts:
+        for board in boards:
             if check_if_board_won(board, pulled_numbers):
-                # print(f'Board won at number {number}!')
-                return get_score(board, pulled_numbers, number)
+                should_stop, return_value = on_board_completion(
+                    board, pulled_numbers, number, boards)
+                if should_stop:
+                    return return_value
 
 
-def p2(input_string: str) -> str:
-    lines = input_string.split('\n')
-    numbers = lines[0]
-    boards = lines[2:]
-
-    board_dicts = get_boards(boards)
-
-    pulled_numbers = set()
-    for number in map(int, numbers.split(',')):
-        pulled_numbers.add(number)
-        for board in board_dicts:
-            if check_if_board_won(board, pulled_numbers):
-                if len(board_dicts) == 1:
-                    return get_score(board,pulled_numbers, number)
-                board_dicts.remove(board)
-                
+def split_boards_and_numbers_lines(lines):
+    return (lines[0], lines[2:])
 
 
 def get_score(board, numbers, last_called):
