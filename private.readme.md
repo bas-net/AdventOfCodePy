@@ -1,0 +1,1 @@
+`C:\Users\BasNe\Downloads\sonar-scanner-4.6.2.2472-windows\bin\sonar-scanner.bat -D"sonar.projectKey=AoC" -D"sonar.sources=." -D"sonar.host.url=http://localhost:9000" -D"sonar.login=4eb380d9c815811ffe90ca66a7230da68ec382d6" -D"sonar.python.coverage.reportPaths=./coverage.xml",`
