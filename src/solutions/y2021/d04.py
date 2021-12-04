@@ -22,7 +22,21 @@ def p1(input_string: str) -> str:
 
 
 def p2(input_string: str) -> str:
-    pass
+    lines = input_string.split('\n')
+    numbers = lines[0]
+    boards = lines[2:]
+
+    board_dicts = get_boards(boards)
+
+    pulled_numbers = set()
+    for number in map(int, numbers.split(',')):
+        pulled_numbers.add(number)
+        for board in board_dicts:
+            if check_if_board_won(board, pulled_numbers):
+                if len(board_dicts) == 1:
+                    return get_score(board,pulled_numbers, number)
+                board_dicts.remove(board)
+                
 
 
 def get_score(board, numbers, last_called):
