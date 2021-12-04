@@ -33,12 +33,26 @@ def p1(input_data) -> str:
 
     options_found = recursive_find_options(amount_to_store, options)
     # print(*options_found, sep='\n')
-    #exit()
+    # exit()
     return len(options_found)
 
 
+@input_ints
 def p2(input_data) -> str:
-    pass
+    if len(input_data) == 5:
+        amount_to_store = 25
+    else:
+        amount_to_store = 150
+        
+    options = list(enumerate(input_data))
+    
+    options_found = recursive_find_options(amount_to_store, options)
+
+    min_length = min(len(x) for x in options_found)
+
+    options_found = [x for x in options_found if len(x) == min_length]
+    
+    return len(options_found)
 
 
 def recursive_find_options(
