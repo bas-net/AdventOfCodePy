@@ -8,57 +8,44 @@ Point = Tuple[int, int]
 Line = Tuple[Point, Point]
 
 
-@input_dict(r'(\d+),(\d+) -> (\d+),(\d+)', [
-    ('x0', int),
-    ('y0', int),
-    ('x1', int),
-    ('y1', int),
-])
+def input_map(func):
+    def inner(input_string):
+        return func(map(lambda line: ((line['x0'], line['y0']), (line['x1'], line['y1'])),
+                        map(lambda s: get_dict_from_string(r'(\d+),(\d+) -> (\d+),(\d+)', [
+                            ('x0', int),
+                            ('y0', int),
+                            ('x1', int),
+                            ('y1', int),
+                        ], s), input_string.split('\n'))))
+
+    return inner
+
+
+@input_map
 def p1(input_data) -> str:
     field = defaultdict(lambda: 0)
+
     for line in input_data:
-        # print(line)
-        x0, y0, x1, y1 = (line['x0'], line['y0'], line['x1'], line['y1'])
-        # print(is_horizontal_line(x0, y0, x1, y1))
-        if is_horizontal_line(x0, y0, x1, y1):
-            min_x = min(x0, x1)
-            max_x = max(x0, x1)
-            min_y = min(y0, y1)
-            may_y = max(y0, y1)
-            for x in range(min_x, max_x + 1):
-                for y in range(min_y, may_y + 1):
-                    field[(x, y)] += 1
-                    # print(f'Marking {x},{y}')
-    # print_field(field)
-    # exit()
-    return str(len([x for x in field.values() if x >= 2]))
+        if not is_line_diagonal(line):
+            for point in get_points_line_crosses(line):
+                field[point] += 1
+
+    return get_score_for_field(field)
 
 
-@input_dict(r'(\d+),(\d+) -> (\d+),(\d+)', [
-    ('x0', int),
-    ('y0', int),
-    ('x1', int),
-    ('y1', int),
-])
+@ input_map
 def p2(input_data) -> str:
     field = defaultdict(lambda: 0)
 
-    # print(get_points_line_crosses(((1, 1), (3, 1))))
-
     for line in input_data:
-        x0, y0, x1, y1 = (line['x0'], line['y0'], line['x1'], line['y1'])
-        # 6,4 -> 2,0
-
-        for point in get_points_line_crosses(((x0, y0), (x1, y1))):
+        for point in get_points_line_crosses(line):
             field[point] += 1
 
-    # print_field(field)
-    # exit()
+    return get_score_for_field(field)
+
+
+def get_score_for_field(field):
     return str(len([x for x in field.values() if x >= 2]))
-
-
-def is_horizontal_line(x0, y0, x1, y1):
-    return x0 == x1 or y0 == y1
 
 
 def print_field(field: Dict[Tuple, int]):
