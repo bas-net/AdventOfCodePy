@@ -1,5 +1,6 @@
+from collections import namedtuple
 import re
-from typing import Any, Callable, Dict, List, Pattern, Tuple, Union
+from typing import Any, Callable, Dict, List, NamedTuple, Pattern, Tuple, Union
 
 
 def input_ints(func: Callable[[List[int]], str]) -> Callable[[str], str]:
@@ -59,3 +60,27 @@ def input_strings(func: Callable[[List[str]], str]) -> Callable[[str], str]:
     def inner(input_string: str) -> str:
         return func(input_string.split('\n'))
     return inner
+
+
+RegexPattern = Union[str, Pattern]
+Property = Tuple[str, Callable]
+
+
+def input_named_tuple(
+        regex: RegexPattern,
+        properties: List[Property]):
+    def decorator(func: Callable[[List[NamedTuple]], str]) -> Callable[[str], str]:
+        def inner(input_string: str) -> str:
+            Entity = namedtuple('Entity', [prop[0] for prop in properties])
+
+            return func(
+                list(
+                    map(
+                        lambda line: Entity(
+                            **get_dict_from_string(regex, properties, line)),
+                        input_string.split('\n')
+                    )
+                )
+            )
+        return inner
+    return decorator

@@ -1,8 +1,8 @@
-from collections import defaultdict
-from typing import Dict, Generator, List, Tuple
+from collections import defaultdict, namedtuple
+from typing import Callable, Dict, Generator, List, NamedTuple, Pattern, Tuple, Union
 import solutions.y2021.lib2021
 
-from solutions.sharedlib import input_strings, get_dict_from_string, input_dict
+from solutions.sharedlib import input_strings, get_dict_from_string, input_dict, input_named_tuple
 
 Point = Tuple[int, int]
 Line = Tuple[Point, Point]
