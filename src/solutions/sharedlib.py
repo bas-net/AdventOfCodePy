@@ -18,7 +18,6 @@ def input_ints(func: Callable[[List[int]], str]) -> Callable[[str], str]:
     return inner
 
 
-
 def input_ints_csv(func: Callable[[List[int]], str]) -> Callable[[str], str]:
     def inner(*args, **kwargs) -> Any:
         if kwargs:
