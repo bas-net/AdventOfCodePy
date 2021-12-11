@@ -4,20 +4,32 @@ import solutions.y2021.lib2021
 from solutions.sharedlib import input_strings, get_dict_from_string, input_dict
 
 
-@input_strings
-def p1(input_data) -> str:
-    octopus_map = {}
-    for y, line in enumerate(input_data):
-        for x, char in enumerate(line):
-            octopus_map[(x, y)] = int(char)
+def input_square_map_ints(function):
+    @input_strings
+    def inner(input_lines):
+        square_map = {}
 
-    # print_it(octopus_map)
-    flash_count = 0
-    for i in range(100):
-        flash_count += step(octopus_map)
-        # print_it(octopus_map)
+        for y, line in enumerate(input_lines):
+            for x, char in enumerate(line):
+                square_map[(x, y)] = int(char)
 
-    return flash_count
+        return function(square_map, len(input_lines[0]), len(input_lines))
+
+    return inner
+
+
+@input_square_map_ints
+def p1(input_data, *_) -> str:
+    return sum(map(lambda _: step(input_data), range(100)))
+
+
+@input_square_map_ints
+def p2(input_data, *_) -> str:
+    i = 1
+    while step(input_data) != 100:
+        i += 1
+
+    return i
 
 
 def step(octopus_map):
@@ -74,17 +86,3 @@ def print_it(p):
             line += str(p[(x, y)])
 
         print(line)
-
-
-@input_strings
-def p2(input_data) -> str:
-    octopus_map = {}
-    for y, line in enumerate(input_data):
-        for x, char in enumerate(line):
-            octopus_map[(x, y)] = int(char)
-
-    i = 1
-    while step(octopus_map) != 100:
-        i += 1
-
-    return i
