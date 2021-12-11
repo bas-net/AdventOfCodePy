@@ -1,76 +1,52 @@
 
-from typing import DefaultDict, Dict, Tuple
-import solutions.y2021.lib2021
-
-from solutions.sharedlib import input_strings, get_dict_from_string, input_dict
+from typing import Dict
 from collections import defaultdict
 
-Point = Tuple[int, int]
+from solutions.sharedlib import GenericMap2D, Point2D, get_points_in_square, input_map_2d
+
+# default to highest so edges don't have to be treated special :D
 
 
-@input_strings
-def p1(input_data) -> str:
-    # default to highest so edges don't have to be treated special :D
-    height_map: Dict[Point, int] = defaultdict(lambda: 9)
-    max_y = 0
-    max_x = 0
-    for y, line in enumerate(input_data):
-        for x, char in enumerate(line):
-            height_map[(x, y)] = int(char)
-            max_x = max(x, max_x)
-        max_y = max(y, max_y)
-
+@input_map_2d(lambda: defaultdict(lambda: 9), int)
+def p1(height_map: GenericMap2D) -> str:
     total_risk_factor = 0
-    for y in range(max_y + 1):
-        for x in range(max_x + 1):
-            if is_point_low_point(height_map, (x, y)):
-                total_risk_factor += 1 + height_map[(x, y)]
+    for point in get_points_in_square(height_map.x_max + 1, height_map.y_max + 1):
+        if is_point_low_point(height_map.map, point):
+            total_risk_factor += 1 + height_map.map[point]
 
     return total_risk_factor
 
-@input_strings
-def p2(input_data) -> str:
-    # default to highest so edges don't have to be treated special :D
-    height_map: Dict[Point, int] = defaultdict(lambda: 9)
-    max_y = 0
-    max_x = 0
-    for y, line in enumerate(input_data):
-        for x, char in enumerate(line):
-            height_map[(x, y)] = int(char)
-            max_x = max(x, max_x)
-        max_y = max(y, max_y)
+# default to highest so edges don't have to be treated special :D
 
+
+@input_map_2d(lambda: defaultdict(lambda: 9), int)
+def p2(height_map: GenericMap2D) -> str:
     low_points = []
-    for y in range(max_y + 1):
-        for x in range(max_x + 1):
-            if is_point_low_point(height_map, (x, y)):
-                low_points.append((x, y))
+    for point in get_points_in_square(height_map.x_max + 1, height_map.y_max + 1):
+        if is_point_low_point(height_map.map, point):
+            low_points.append(point)
 
     basin_sizes = []
     for low_point in low_points:
-        basin_sizes.append(get_size_of_basin(height_map, low_point))
+        basin_sizes.append(get_size_of_basin(height_map.map, low_point))
 
     basin_sizes.sort(reverse=True)
 
     return basin_sizes[0] * basin_sizes[1] * basin_sizes[2]
 
 
-def is_point_low_point(height_map, point):
-    if (1 == 1
-                and height_map[point] < height_map[(point[0] - 1, point[1])]
-                and height_map[point] < height_map[(point[0] + 1, point[1])]
-                and height_map[point] < height_map[(point[0], point[1] - 1)]
-                and height_map[point] < height_map[(point[0], point[1] + 1)]
-            ):
-        return True
-    return False
+def is_point_low_point(height_map: Dict[Point2D, int], point: Point2D):
+    return (height_map[point] < height_map[point.up()]
+            and height_map[point] < height_map[point.down()]
+            and height_map[point] < height_map[point.left()]
+            and height_map[point] < height_map[point.right()])
 
 
-def get_size_of_basin(height_map, low_point):
+def get_size_of_basin(height_map: Dict[Point2D, int], low_point: Point2D):
     queue = [low_point]
     handled = set()
 
-    def add_to_queue(p):
+    def add_to_queue(p: Point2D):
         if p in handled:
             return
         queue.append(p)
@@ -80,9 +56,9 @@ def get_size_of_basin(height_map, low_point):
         if height_map[point] != 9:
             handled.add(point)
 
-            add_to_queue((point[0] - 1, point[1]))
-            add_to_queue((point[0] + 1, point[1]))
-            add_to_queue((point[0], point[1] - 1))
-            add_to_queue((point[0], point[1] + 1))
+            add_to_queue(point.up())
+            add_to_queue(point.down())
+            add_to_queue(point.left())
+            add_to_queue(point.right())
 
     return len(handled)

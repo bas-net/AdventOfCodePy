@@ -1,30 +1,14 @@
 
-import solutions.y2021.lib2021
-
-from solutions.sharedlib import input_strings, get_dict_from_string, input_dict
+from solutions.sharedlib import GenericMap2D, Point2D, get_points_in_square, input_map_2d
 
 
-def input_square_map_ints(function):
-    @input_strings
-    def inner(input_lines):
-        square_map = {}
-
-        for y, line in enumerate(input_lines):
-            for x, char in enumerate(line):
-                square_map[(x, y)] = int(char)
-
-        return function(square_map, len(input_lines[0]), len(input_lines))
-
-    return inner
-
-
-@input_square_map_ints
-def p1(input_data, *_) -> str:
+@input_map_2d(dict, int)
+def p1(input_data: GenericMap2D) -> str:
     return sum(map(lambda _: step(input_data), range(100)))
 
 
-@input_square_map_ints
-def p2(input_data, *_) -> str:
+@input_map_2d(dict, int)
+def p2(input_data: GenericMap2D) -> str:
     i = 1
     while step(input_data) != 100:
         i += 1
@@ -32,28 +16,24 @@ def p2(input_data, *_) -> str:
     return i
 
 
-def step(octopus_map):
+def step(octopus_map: GenericMap2D):
     flashed = set()
 
-    def increment_point(point):
+    def increment_point(point: Point2D):
         if point in flashed:
             return
 
-        octopus_map[point] += 1
-        if octopus_map[point] > 9:
-            if point in flashed:
-                raise Exception()
-
+        octopus_map.map[point] += 1
+        if octopus_map.map[point] > 9:
             flashed.add(point)
 
-            octopus_map[point] = 0
+            octopus_map.map[point] = 0
 
             for adj in get_adjacent(point):
                 increment_point(adj)
 
-    for y in range(10):
-        for x in range(10):
-            increment_point((x, y))
+    for point in get_points_in_square(octopus_map.x_max, octopus_map.y_max):
+        increment_point(point)
 
     return len(flashed)
 

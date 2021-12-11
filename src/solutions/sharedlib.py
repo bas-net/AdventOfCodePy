@@ -1,6 +1,6 @@
 from collections import namedtuple
 import re
-from typing import Any, Callable, Dict, List, NamedTuple, Pattern, Tuple, Union
+from typing import Any, Callable, Dict, Generator, Generic, List, NamedTuple, Pattern, Tuple, TypeVar, Union
 
 
 def input_ints(func: Callable[[List[int]], str]) -> Callable[[str], str]:
@@ -99,3 +99,68 @@ def input_named_tuple(
             )
         return inner
     return decorator
+
+
+class Point2D(NamedTuple):
+    x: int
+    y: int
+
+    def up(self, amount=1):
+        return Point2D(self.x, self.y - amount)
+
+    def down(self, amount=1):
+        return Point2D(self.x, self.y + amount)
+
+    def left(self, amount=1):
+        return Point2D(self.x - amount, self.y)
+
+    def right(self, amount=1):
+        return Point2D(self.x + amount, self.y)
+
+
+T = TypeVar('T')
+
+
+class GenericMap2D(NamedTuple, Generic[T]):
+    map: Dict[Point2D, T]
+    x_max: int
+    y_max: int
+    x_min: int = 0
+    y_min: int = 0
+
+
+def input_map_2d(
+    dict_initializer: Callable[[], Dict[Point2D, T]],
+    map_function: Callable[[str], T]
+) -> Callable[[Callable[[GenericMap2D], str]], Callable[[str], str]]:
+
+    def decorator(function: Callable[[GenericMap2D], str]) -> Callable[[str], str]:
+
+        @input_strings
+        def inner(lines: List[str]) -> str:
+            map_dict = dict_initializer()
+
+            for y, line in enumerate(lines):
+                for x, char in enumerate(line):
+                    map_dict[Point2D(x, y)] = map_function(char)
+
+            return function(GenericMap2D(
+                map_dict,
+                len(lines[0]),
+                len(lines)
+            ))
+
+        return inner
+
+    return decorator
+
+
+def get_points_in_square(
+        x_max: int,
+        y_max: int,
+        x_min: int = 0,
+        y_min: int = 0
+) -> Generator[Point2D, None, None]:
+    for x in range(x_min, x_max):
+        for y in range(y_min, y_max):
+            yield Point2D(x, y)
