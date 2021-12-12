@@ -164,3 +164,10 @@ def get_points_in_square(
     for x in range(x_min, x_max):
         for y in range(y_min, y_max):
             yield Point2D(x, y)
+
+
+def if_not_none(function, a, b):
+    if a is None:
+        return b
+    else:
+        return function(a, b)
