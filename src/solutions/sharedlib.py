@@ -165,6 +165,16 @@ def get_points_in_square(
         for y in range(y_min, y_max):
             yield Point2D(x, y)
 
+def get_points_in_square_y_first(
+        x_max: int,
+        y_max: int,
+        x_min: int = 0,
+        y_min: int = 0
+) -> Generator[Point2D, None, None]:
+    for y in range(y_min, y_max):
+        for x in range(x_min, x_max):
+            yield Point2D(x, y)
+
 
 def if_not_none(function, a, b):
     if a is None:
