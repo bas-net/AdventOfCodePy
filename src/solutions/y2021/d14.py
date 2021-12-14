@@ -59,7 +59,7 @@ def p2(input_data) -> str:
     for pair in map(lambda j: polymer[j:j+2], range(len(polymer)-1)):
         buckets[pair] += 1
 
-    print(buckets)
+    # print(buckets)
     for i in range(40):
         new_buckets = defaultdict(lambda: 0)
         for pair in buckets:
@@ -73,16 +73,16 @@ def p2(input_data) -> str:
 
         # print(buckets)
 
-    print(len(buckets))
+    # print(len(buckets))
     counts = defaultdict(lambda: 0)
     for pair in buckets:
         counts[pair[0]] += buckets[pair]
     counts[polymer[-1]] += 1
 
-    print(counts)
+    # print(counts)
     counts = list(counts.values())
     counts.sort()
-    print(counts[-1] - counts[0])
+    # print(counts[-1] - counts[0])
 
     # exit()
     return counts[-1] - counts[0]
