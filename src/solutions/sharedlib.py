@@ -117,6 +117,9 @@ class Point2D(NamedTuple):
     def right(self, amount=1):
         return Point2D(self.x + amount, self.y)
 
+    def add(self, other: 'Point2D'):
+        return Point2D(self.x + other.x, self.y + other.y)
+
 
 T = TypeVar('T')
 
@@ -164,6 +167,7 @@ def get_points_in_square(
     for x in range(x_min, x_max):
         for y in range(y_min, y_max):
             yield Point2D(x, y)
+
 
 def get_points_in_square_y_first(
         x_max: int,
