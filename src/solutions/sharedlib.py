@@ -111,11 +111,23 @@ class Point2D(NamedTuple):
     def down(self, amount=1):
         return Point2D(self.x, self.y + amount)
 
+    def south(self, amount=1, loopback_at=None):
+        if loopback_at:
+            return Point2D(self.x, (self.y + amount) % loopback_at)
+        else:
+            return self.down()
+
     def left(self, amount=1):
         return Point2D(self.x - amount, self.y)
 
     def right(self, amount=1):
         return Point2D(self.x + amount, self.y)
+
+    def east(self, amount=1, loopback_at=None):
+        if loopback_at:
+            return Point2D((self.x + amount) % loopback_at, self.y)
+        else:
+            return self.east()
 
     def add(self, other: 'Point2D'):
         return Point2D(self.x + other.x, self.y + other.y)
